@@ -29,7 +29,7 @@ class Graph extends Component {
   componentDidMount() {
     let svg = d3.select("#graph")
             .append("svg")
-            .attr("width", this.props.containerWidth - 200)
+                .attr("width", this.props.containerWidth - 40)
             .attr("height", 480);
     this.setState({
       graph: svg,

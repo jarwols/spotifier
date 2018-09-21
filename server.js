@@ -1,12 +1,14 @@
 const express = require('express')
-const dotenv = require('dotenv').config() 
+// const dotenv = require('dotenv').config() 
 const app = express()
 var cors = require('cors') 
-var request = require('request');
+// var request = require('request');
 
 app.use(cors())
 
-app.get('/callback', (req, res) => {
+app.get('/api/callback', (req, res) => {
+    console.log(req)
+    console.log(req.query.access_token)
     res.send(req.query.access_token)
 })
 

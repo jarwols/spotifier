@@ -29,13 +29,14 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props != prevProps && this.props.artists.length > 0) {
+    if(this.props != prevProps && (this.props.artists && this.props.artists.length > 0)) {
         this.__initGenres(); 
     }
   }
 
   componentWillMount() {
     constructHeader(this.props.location.hash)
+    window.history.replaceState(null, null, `${window.location.pathname}`);
     setSpotifyTerm(this.state.term);
     fetchSpotifyIfNeeded(this.state.term, this.state.query)
   }
