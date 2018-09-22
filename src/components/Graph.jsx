@@ -29,10 +29,12 @@ class Graph extends Component {
   componentDidMount() {
     let svg = d3.select("#graph")
             .append("svg")
-                .attr("width", this.props.containerWidth - 40)
-            .attr("height", 480);
+            .attr("width", this.props.containerWidth - 40)
+            .attr("height", 680);
     this.setState({
       graph: svg,
+      height: 680, 
+      width: this.props.containerWidth - 40
     })
   }
 
@@ -53,31 +55,44 @@ class Graph extends Component {
     d3.select('svg').selectAll('*').remove();
 
     let data = this.state.result_set;
-    let w = this.props.containerWidth - 200;
-    let h = 400; 
-    let barPadding = 10;
-    console.log(data) 
 
-    d3.select('svg')
-      .selectAll("rect")
+    var scaleRadius = d3.scaleLinear()
+      .domain([0,1])
+      .range([50,150]);
+
+    var colorCircles = d3.scaleOrdinal(['white']);
+
+    let node = this.state.graph.selectAll("g")
       .data(data)
       .enter()
-      .append("rect")
-      .attr("x", function(d, i) {
-        return i * (w / data.length);
+      .append("g")
+
+    node.append("circle")
+      .attr('r', function(d) { return scaleRadius(d.value)})
+      .style("fill", function(d) { return colorCircles(d.title)})
+      .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
+
+    node.append("text")
+      .attr("text-anchor", "middle")
+      .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
+      .attr('font-size', '12pt')
+      .text(function(d){return d.title})
+
+    d3.forceSimulation(data)
+      .velocityDecay(0.8)
+      .alphaDecay(0.001)
+      .force("charge", d3.forceManyBody().distanceMin(150).strength([-1000]))
+      .force("x", d3.forceX(0))
+      .force("y", d3.forceY(0))
+      .on("tick", function() {
+        node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
       })
-      .attr("y", function(d) {
-        return h - d.value*400;;  //Height minus data value
-      })
-      .attr("width", w / data.length - barPadding)
-      .attr("height", function(d) {
-        return d.value*400;
-      })    
   }
 
   render() {
     return (
       <div id="graph" className="graph">
+        <h1>{this.props.track.name}</h1>
       </div>
     );
   }

@@ -8,7 +8,9 @@
     font-size: 2em;
     color: white; 
     cursor: pointer;
-    background: #170058;;
+    background: #654ea3;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #eaafc8, #654ea3);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #eaafc8, #654ea3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     text-align: center;
 }
 
@@ -57,6 +59,8 @@
     margin-top: 50px;
     width: 20%; 
     border-radius: 3em;
+    border: none; 
+    color: #654ea3;
 }
 
 .Login button h3 {
@@ -72,7 +76,7 @@
 }
 
 .Login h1 {
-    color: #ffbaba;
+    font-size: 3em;
 }
 
 html, body, #root, #root:nth-child(1) {

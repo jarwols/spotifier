@@ -6,7 +6,7 @@ import Tracks from './Tracks'
 import Artist from './Artist'
 import Graph from './Graph'
 import _ from 'lodash' 
-import { constructHeader, fetchSpotifyIfNeeded, setSpotifyTerm } from '../actions';
+import { constructHeader, fetchSpotifyIfNeeded, setSpotifyTerm, createPlaylist } from '../actions';
 
 class App extends Component {
   constructor(props) {
@@ -18,6 +18,7 @@ class App extends Component {
       feature: null, 
       genres: [],
       tracks: [],
+      track: {},
       mouseOver: false,
       displayGenres: [],
       query: 'artists',
@@ -36,7 +37,7 @@ class App extends Component {
 
   componentWillMount() {
     constructHeader(this.props.location.hash)
-    window.history.replaceState(null, null, `${window.location.pathname}`);
+    // window.history.replaceState(null, null, `${window.location.pathname}`);
     setSpotifyTerm(this.state.term);
     fetchSpotifyIfNeeded(this.state.term, this.state.query)
   }
@@ -87,7 +88,7 @@ class App extends Component {
   __setFeature(feature) {
     this.setState({feature: feature})
   }
-
+  
   renderArtists() {
     let artists = this.state.artistsGenres.map((genre, index) => 
       <Artist
@@ -125,15 +126,20 @@ class App extends Component {
               <button className={this.state.term === 'long_term' ? 'active_term': null} onClick={() => this.__changeTerm('long_term')}>Long Term</button>
               <button className={this.state.term === 'medium_term' ? 'active_term' : null} onClick={() => this.__changeTerm('medium_term')}>Medium Term</button>
               <button className={this.state.term === 'short_term' ? 'active_term' : null} onClick={() => this.__changeTerm('short_term')}>Short Term</button>
+              <button onClick={() => createPlaylist('short_term')}>Playlist</button>
+
             </div>
             { content } 
           </div>
-          { this.state.query === 'artists' ? 
-              <Genres 
-                mouseOver = {this.state.mouseOver}
-                displayGenres = {this.state.displayGenres}/>
-            : <Graph
-                audio_feature = {this.state.feature}/>}
+          <div className="info">
+            { this.state.query === 'artists' ? 
+                <Genres 
+                  mouseOver = {this.state.mouseOver}
+                  displayGenres = {this.state.displayGenres}/>
+              : <Graph
+                  track = {this.state.track}
+                  audio_feature = {this.state.feature}/>}
+          </div> 
         </div>
       </div> 
     );

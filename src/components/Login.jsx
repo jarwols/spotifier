@@ -16,7 +16,7 @@ class Login extends Component {
     }
 
     __handleLogin() {
-        let loginURL = this.__getLoginURL(['user-library-read', 'user-top-read'])
+        let loginURL = this.__getLoginURL(['user-library-read', 'user-top-read', 'playlist-modify-public'])
         window.location.href = loginURL;
     }
 
