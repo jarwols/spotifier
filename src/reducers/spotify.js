@@ -56,7 +56,7 @@ const spotify = (state = {}, action) => {
         return {
             ...state,
             [action.term]: {
-                isLoading: true,
+                isLoading: false,
                 trackList: state[action.term].trackList,
                 artistList: state[action.term].artistList,
                 featureList: action.items
@@ -68,11 +68,15 @@ const spotify = (state = {}, action) => {
             term: action.term 
         }
     default:
-        return {
-            short_term: emptyTerm,
-            medium_term: emptyTerm,
-            long_term: emptyTerm,
-            term: 'long_term'
+        if(Object.keys(state).length === 0) {
+            return {
+                short_term: emptyTerm,
+                medium_term: emptyTerm,
+                long_term: emptyTerm,
+                term: 'short_term'
+            }
+        } else {
+            return state;
         }
     }
 }

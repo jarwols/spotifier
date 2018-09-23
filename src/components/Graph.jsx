@@ -12,12 +12,13 @@ class Graph extends Component {
       graph: null,
       feature: props.audio_feature,
       result_set: null,
-      result_keys: null
+      result_keys: null,
+      simulation: null 
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevProps.audio_feature != this.props.audio_feature) {
+    if(prevProps.audio_feature != this.props.audio_feature && this.props.audio_feature[0] != null) {
       this.__parseData(this.props.audio_feature[0]); 
       this.setState({feature: this.props.audio_feature})
     }
@@ -53,7 +54,6 @@ class Graph extends Component {
 
   __drawGraph() { 
     d3.select('svg').selectAll('*').remove();
-
     let data = this.state.result_set;
 
     var scaleRadius = d3.scaleLinear()
@@ -70,29 +70,41 @@ class Graph extends Component {
     node.append("circle")
       .attr('r', function(d) { return scaleRadius(d.value)})
       .style("fill", function(d) { return colorCircles(d.title)})
+      .style("stroke", "white")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
 
     node.append("text")
       .attr("text-anchor", "middle")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
-      .attr('font-size', '12pt')
+      .attr('font-size', '8pt')
       .text(function(d){return d.title})
+    
+    node.append("text")
+      .attr("text-anchor", "middle")
+      .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
+      .attr('font-size', '8pt')
+      .attr("dy", "2em") 
+      .text(function(d){return d.value.toFixed(2)})
 
-    d3.forceSimulation(data)
+    var simulation = d3.forceSimulation(data)
       .velocityDecay(0.8)
-      .alphaDecay(0.001)
-      .force("charge", d3.forceManyBody().distanceMin(150).strength([-1000]))
+      .alphaDecay(0.01)
+      .force("charge", d3.forceManyBody().strength([-1000]))
       .force("x", d3.forceX(0))
       .force("y", d3.forceY(0))
       .on("tick", function() {
         node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
       })
+    if(!this.state.simulation) this.setState({simulation: simulation})
   }
 
   render() {
     return (
       <div id="graph" className="graph">
-        <h1>{this.props.track.name}</h1>
+        <div>
+          <h1>{this.props.track.name}</h1>
+          {this.props.track.artists ? <h3>{this.props.track.artists[0].name}</h3> : null}
+        </div>
       </div>
     );
   }

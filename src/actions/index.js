@@ -15,15 +15,24 @@ export const USER_LOADING = 'USER_LOADING'
 export const USER_LOADED = 'USER_LOADED'
 export const PLAYLIST_LOADING = 'PLAYLIST_LOADING'
 export const PLAYLIST_LOADED = 'PLAYLIST_LOADED'
+export const RESET_SPOTIFY = 'RESET_SPOTIFY'
 export const SPOTIFY_HOST = 'https://api.spotify.com/v1'
+
 export function constructHeader(query) {
   query = parse(query)
   var token = query['#access_token'];
   var header = { headers: { 'Authorization': 'Bearer ' + token } };
+  dispatch(fetchUserProfile(header));
   dispatch({
     type: HEADER_SET,
     header
   });
+}
+
+export function resetSpotify() { 
+  dispatch({
+    type: RESET_SPOTIFY
+  })
 }
 
 export function setSpotifyTerm(term) {
@@ -87,33 +96,60 @@ function requestPlaylist(term) {
   }
 }
 
-function __idHelper(items) {
+function receivePlaylist(term) {
+  return {
+    type: PLAYLIST_LOADED,
+    term: term 
+  }
+}
+
+function __idHelper(term, state) {
+  var tracks = state.spotify[term].trackList
   var ids = [];
-  items.map(item => { ids.push(item.id) });
-  ids = ids.join(',');
+  tracks.map(item => { ids.push(item.uri) });
   return ids; 
 }
 
-function fetchUserProfile() {
-  var state = getState(); 
-  if (state.user && state.user.id) return state.user.id; 
+function addTracks(items, term) {
+  return dispatch => {
+    var ids = __idHelper(term, getState())
+    return fetch(SPOTIFY_HOST + '/playlists/' + items.id + '/tracks?uris=' + encodeURIComponent(ids), 
+          Object.assign({ method: 'POST', body: JSON.stringify({ uris: ids })}, getState().header))
+            .then(response => response.json())
+            .then(json => dispatch(receivePlaylist(term)))
+  }
+}
+
+function fetchUserProfile(header) {
   return dispatch => {
     dispatch(requestUser())
-    return fetch(SPOTIFY_HOST + '/me', getState().header)
+    return fetch(SPOTIFY_HOST + '/me', header)
       .then(response => response.json())
       .then(json => dispatch(receiveUser(json)))
   }
 }
 
-export function createPlaylist(items, term) {
-  // var ids = __idHelper(items)
+function generateName(term) {
+
+  switch(term) {
+    case 'short_term':
+      return 'My Top 50 - Month'
+    case 'medium_term':
+      return 'My Top 50 - 6 Months'
+    case 'long_term': 
+      return 'My Top 50 - All Time'
+  }
+}
+
+export function createPlaylist(term) {
   return dispatch => {
+    let state = getState();
+    let name = generateName(term); 
     dispatch(requestPlaylist(term))
-    var userId = fetchUserProfile();
-    console.log(userId);  
-    return fetch(SPOTIFY_HOST + '/users/' +  + '/playlists', getState().header)
-      .then(response => response.json())
-      .then(json => dispatch(receiveFeatures(json, term)))
+    return fetch(SPOTIFY_HOST + '/users/' + state.user.user.id + '/playlists', 
+              Object.assign({ method: 'POST', body: JSON.stringify({ name: name })}, state.header))
+            .then(response => response.json())
+            .then(json => dispatch(addTracks(json, term)))
   }
 }
 

@@ -153,6 +153,23 @@ body {
     margin-left: 5%;
 }
 
+#graph div {
+    display: flex; 
+    flex-direction: column; 
+}
+
+#graph h1 {
+    text-align: center;
+    font-size: 32pt;
+    margin: 0; 
+}
+
+#graph h3 {
+    text-align: center; 
+    font-size: 24pt; 
+    margin-top: 10px; 
+}
+
 .x-label {
     font-size: 10px; 
 }

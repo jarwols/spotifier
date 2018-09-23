@@ -4,7 +4,7 @@ const user = (state = {}, action) => {
       return {
         ...state,
         user: {
-            ...action.user,
+            id: null,
             isLoading: true
         }
       }
@@ -12,7 +12,7 @@ const user = (state = {}, action) => {
       return {
         ...state,
         user: {
-            ...action.user,
+            id: action.id,
             isLoading: false
         }
       }

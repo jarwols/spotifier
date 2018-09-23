@@ -4,7 +4,16 @@ const playlist = (state = {}, action) => {
       return {
         ...state,
         playlist: {
-            isExporting: true
+            isExporting: true,
+            term: action.term
+        }
+      }
+    case 'PLAYLIST_LOADED': 
+      return {
+        ...state,
+        playlist: {
+          isExporting: false,
+          term: action.term
         }
       }
     default:

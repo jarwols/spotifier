@@ -17,6 +17,7 @@ class Tracks extends Component {
 
     __activatePlayer(index, track) {
         this.__queryAudioFeatures(track); 
+        this.props.setTrack(track); 
         this.setState({mouseOver: true, indexPlaying: index})
     }
 
@@ -28,7 +29,7 @@ class Tracks extends Component {
         return(
             <div>
                 {this.props.tracks.map((track, index) => 
-                    <div key={index} onMouseOver={() => this.__activatePlayer(index, track)} onMouseDown={() => window.open(track.external_urls.spotify)}>
+                    <div key={index} onMouseOver={() => this.__activatePlayer(index, track)}  onMouseDown={() => window.open(track.external_urls.spotify)}>
                         <p>{track.name}</p>
                         { (this.state.indexPlaying == index) ? <ReactPlayer style={{display: 'none'}} url={track.preview_url} playing /> : null } 
                     </div> 

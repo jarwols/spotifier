@@ -5,6 +5,7 @@ import Genres from './Genres'
 import Tracks from './Tracks'
 import Artist from './Artist'
 import Graph from './Graph'
+import { dispatch } from '../store'
 import _ from 'lodash' 
 import { constructHeader, fetchSpotifyIfNeeded, setSpotifyTerm, createPlaylist } from '../actions';
 
@@ -21,12 +22,13 @@ class App extends Component {
       track: {},
       mouseOver: false,
       displayGenres: [],
-      query: 'artists',
+      query: 'tracks',
       header: null,
       term: 'long_term'
     }
     this.__toggleMouse = this.__toggleMouse.bind(this); 
     this.__setFeature = this.__setFeature.bind(this); 
+    this.__setTrack = this.__setTrack.bind(this); 
   }
 
   componentDidUpdate(prevProps) {
@@ -36,7 +38,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    constructHeader(this.props.location.hash)
+    constructHeader(this.props.location.hash);
     // window.history.replaceState(null, null, `${window.location.pathname}`);
     setSpotifyTerm(this.state.term);
     fetchSpotifyIfNeeded(this.state.term, this.state.query)
@@ -88,7 +90,11 @@ class App extends Component {
   __setFeature(feature) {
     this.setState({feature: feature})
   }
-  
+
+  __setTrack(track) {
+    this.setState({track: track}) 
+  }
+
   renderArtists() {
     let artists = this.state.artistsGenres.map((genre, index) => 
       <Artist
@@ -104,6 +110,7 @@ class App extends Component {
       <Tracks
         audioFeatures={this.props.audioFeatures} 
         tracks={this.props.tracks}
+        setTrack={this.__setTrack}
         setFeature={this.__setFeature}
       />);
   }
@@ -126,7 +133,7 @@ class App extends Component {
               <button className={this.state.term === 'long_term' ? 'active_term': null} onClick={() => this.__changeTerm('long_term')}>Long Term</button>
               <button className={this.state.term === 'medium_term' ? 'active_term' : null} onClick={() => this.__changeTerm('medium_term')}>Medium Term</button>
               <button className={this.state.term === 'short_term' ? 'active_term' : null} onClick={() => this.__changeTerm('short_term')}>Short Term</button>
-              <button onClick={() => createPlaylist('short_term')}>Playlist</button>
+              <button onClick={() => dispatch(createPlaylist(this.state.term))}>Export Playlist</button>
 
             </div>
             { content } 
