@@ -13,7 +13,7 @@ class Graph extends Component {
       feature: props.audio_feature,
       result_set: null,
       result_keys: null,
-      simulation: null 
+      simulation: false 
     }
   }
 
@@ -21,9 +21,6 @@ class Graph extends Component {
     if(prevProps.audio_feature != this.props.audio_feature && this.props.audio_feature[0] != null) {
       this.__parseData(this.props.audio_feature[0]); 
       this.setState({feature: this.props.audio_feature})
-    }
-    if(this.state.result_set != null) {
-      this.__drawGraph(); 
     }
   }
 
@@ -50,12 +47,31 @@ class Graph extends Component {
       result_set: result_arr, 
       result_keys: result_keys
     })
+    this.__drawGraph(result_arr); 
   }
 
-  __drawGraph() { 
-    d3.select('svg').selectAll('*').remove();
-    let data = this.state.result_set;
-
+  __drawGraph(data) { 
+    if(!this.state.simulation) {
+      var simulation = d3.forceSimulation(data)
+      .velocityDecay(0.8)
+      .alphaDecay(0.01)
+      .force("charge", d3.forceManyBody().distanceMin(200).strength([-1000]))
+      .force("x", d3.forceX(0))
+      .force("y", d3.forceY(0))
+      .on("tick", function() {
+        d3.selectAll("g").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
+      })
+    } else {
+      d3.forceSimulation(data)
+      .velocityDecay(0.55)
+      .force("charge", d3.forceManyBody().strength([-800]))
+      .force("x", d3.forceX(0))
+      .force("y", d3.forceY(0))
+      .on("tick", function() {
+        d3.selectAll("g").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
+      })
+    }
+    
     var scaleRadius = d3.scaleLinear()
       .domain([0,1])
       .range([50,150]);
@@ -64,37 +80,36 @@ class Graph extends Component {
 
     let node = this.state.graph.selectAll("g")
       .data(data)
-      .enter()
+    
+    node.exit().remove() 
+
+    let nodeEnter = node.enter()
       .append("g")
 
-    node.append("circle")
+    nodeEnter.append("circle")
       .attr('r', function(d) { return scaleRadius(d.value)})
       .style("fill", function(d) { return colorCircles(d.title)})
-      .style("stroke", "white")
+      .style("stroke", "black")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
 
-    node.append("text")
+    nodeEnter.append("text")
       .attr("text-anchor", "middle")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
       .attr('font-size', '8pt')
       .text(function(d){return d.title})
     
-    node.append("text")
+    nodeEnter.append("text")
       .attr("text-anchor", "middle")
+      .attr("class", "value")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
       .attr('font-size', '8pt')
       .attr("dy", "2em") 
-      .text(function(d){return d.value.toFixed(2)})
+      .text(function(d){ return d.value.toFixed(2)})
 
-    var simulation = d3.forceSimulation(data)
-      .velocityDecay(0.8)
-      .alphaDecay(0.01)
-      .force("charge", d3.forceManyBody().strength([-1000]))
-      .force("x", d3.forceX(0))
-      .force("y", d3.forceY(0))
-      .on("tick", function() {
-        node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
-      })
+    node.select("circle").transition().duration(500)
+        .ease(d3.easeCircleOut).attr('r', function(d) { return scaleRadius(d.value)});
+    node.select(".value").text(function(d){ return d.value.toFixed(2)})
+    
     if(!this.state.simulation) this.setState({simulation: simulation})
   }
 
