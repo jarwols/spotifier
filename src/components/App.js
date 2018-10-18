@@ -62,9 +62,6 @@ class App extends Component {
       artistsGenres.push(artistObj)
       allGenres.concat(genres)
     })
-    artistsGenres = artistsGenres.sort(function(a, b) {
-      return b.popularity - a.popularity
-    })
     this.setState({genres: _.uniq(allGenres), artistsGenres: artistsGenres})
   }
 
@@ -100,6 +97,7 @@ class App extends Component {
       <Artist
         __toggleMouse={this.__toggleMouse}
         key={index}
+        index={index}
         genre={genre}/>
     ); 
     return artists; 
@@ -126,15 +124,16 @@ class App extends Component {
       <div className="Holder">
         <div className="App"> 
           <div className="artists">
-            <h3 onClick = {() => this.__toggleOptions()}>
-              Your Top {this.state.query}
-            </h3>
-            <div className="term">
-              <button className={this.state.term === 'long_term' ? 'active_term': null} onClick={() => this.__changeTerm('long_term')}>Long Term</button>
-              <button className={this.state.term === 'medium_term' ? 'active_term' : null} onClick={() => this.__changeTerm('medium_term')}>Medium Term</button>
-              <button className={this.state.term === 'short_term' ? 'active_term' : null} onClick={() => this.__changeTerm('short_term')}>Short Term</button>
-              <button onClick={() => dispatch(createPlaylist(this.state.term))}>Export Playlist</button>
-
+            <div>
+              <h3 onClick = {() => this.__toggleOptions()}>
+                Your Top {this.state.query}
+              </h3>
+              <div className="term">
+                <button className={this.state.term === 'long_term' ? 'active_term': null} onClick={() => this.__changeTerm('long_term')}>All Time</button>
+                <button className={this.state.term === 'medium_term' ? 'active_term' : null} onClick={() => this.__changeTerm('medium_term')}>6 Months</button>
+                <button className={this.state.term === 'short_term' ? 'active_term' : null} onClick={() => this.__changeTerm('short_term')}>This Month</button>
+                <button onClick={() => dispatch(createPlaylist(this.state.term))}>Export Playlist</button>
+              </div>
             </div>
             { content } 
           </div>

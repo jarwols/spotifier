@@ -18,12 +18,12 @@ body {
 
 .Holder {
     background: #654ea3;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to bottom, #eaafc8, #654ea3);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to bottom, #eaafc8, #654ea3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */    
+    background: -webkit-linear-gradient(to left, #eaafc8, #654ea3);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to left, #eaafc8, #654ea3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */    
     min-height: 100%;
     padding: 1em;
     border: 6px solid white;
-    margin: 1em 0.5em 1em 0.5em;
+    margin: 0.5em;
 }
 
 .genres div {
@@ -67,6 +67,10 @@ body {
     border-radius: 1em;
     border: 1px solid white;
     padding: 5px 20px 5px 20px; 
+}
+
+.term button:focus {
+    outline: none; 
 }
 
 .active_term {
@@ -149,8 +153,21 @@ body {
     height: 680; 
     width: 40%; 
     position: fixed;
-    top: 5em;
+    top: 3em;
     margin-left: 5%;
+}
+
+#traits {
+    flex-direction: row !important; 
+    justify-content: space-around;
+    border: 3px solid white;
+    height: 65px;
+    width: 80%; 
+    margin: 0 auto;  
+}
+
+#graph h4 {
+    font-size: 12pt; 
 }
 
 #graph div {

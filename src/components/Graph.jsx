@@ -28,10 +28,10 @@ class Graph extends Component {
     let svg = d3.select("#graph")
             .append("svg")
             .attr("width", this.props.containerWidth - 40)
-            .attr("height", 680);
+            .attr("height", 800);
     this.setState({
       graph: svg,
-      height: 680, 
+      height: 800, 
       width: this.props.containerWidth - 40
     })
   }
@@ -40,6 +40,7 @@ class Graph extends Component {
     let result_arr = [];
     let result_keys = {}; 
     for (let key in key_set) {
+      if(data[key_set[key]].toFixed(2) == 0) continue; 
       result_arr.push({value: data[key_set[key]], title: key_set[key], index: key})
       result_keys[key] = key_set[key];
     }
@@ -50,38 +51,49 @@ class Graph extends Component {
     this.__drawGraph(result_arr); 
   }
 
-  __drawGraph(data) { 
-    if(!this.state.simulation) {
-      var simulation = d3.forceSimulation(data)
-      .velocityDecay(0.8)
-      .alphaDecay(0.01)
-      .force("charge", d3.forceManyBody().distanceMin(200).strength([-1000]))
-      .force("x", d3.forceX(0))
-      .force("y", d3.forceY(0))
-      .on("tick", function() {
-        d3.selectAll("g").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
-      })
-    } else {
-      d3.forceSimulation(data)
-      .velocityDecay(0.55)
-      .force("charge", d3.forceManyBody().strength([-800]))
-      .force("x", d3.forceX(0))
-      .force("y", d3.forceY(0))
-      .on("tick", function() {
-        d3.selectAll("g").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
-      })
-    }
+  __generateForce(data, scaleRadius) {
+    var simulation = d3.forceSimulation(data)
+    .velocityDecay(0.8)
+    .alphaDecay(0)
+    .force("charge", d3.forceManyBody().strength([300]))
+    .force("x", d3.forceX(0))
+    .force("y", d3.forceY(0))
+    .force('collision', d3.forceCollide().radius(function(d) {
+      return scaleRadius(d.value); 
+    }))
+    .on("tick", function() {
+      d3.selectAll("g").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
+    })
+    if(!this.state.simulation) this.setState({simulation: simulation, data: data})
+    return data; 
+  }
+
+  __checkTraits() {
+    if(!this.state.result_set) return; 
+    return (this.state.result_set.map((item, index) => {
+      if(item.value > 0.66) {
+        return (
+          <h4 key={"trait-" + index}>{item.title}</h4>
+        )
+      }
+    }));
+  }
     
+  __drawGraph(data) { 
     var scaleRadius = d3.scaleLinear()
       .domain([0,1])
       .range([50,150]);
+
+    data = this.__generateForce(data, scaleRadius) 
 
     var colorCircles = d3.scaleOrdinal(['white']);
 
     let node = this.state.graph.selectAll("g")
       .data(data)
     
-    node.exit().remove() 
+    node.exit().transition().duration(2000)
+      .attr('opacity', 0)
+      .remove() 
 
     let nodeEnter = node.enter()
       .append("g")
@@ -89,7 +101,8 @@ class Graph extends Component {
     nodeEnter.append("circle")
       .attr('r', function(d) { return scaleRadius(d.value)})
       .style("fill", function(d) { return colorCircles(d.title)})
-      .style("stroke", "black")
+      .style("stroke", "#eaafc8")
+      .attr("stroke-width", "3px")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
 
     nodeEnter.append("text")
@@ -106,11 +119,9 @@ class Graph extends Component {
       .attr("dy", "2em") 
       .text(function(d){ return d.value.toFixed(2)})
 
-    node.select("circle").transition().duration(500)
+    node.select("circle").transition().duration(2000)
         .ease(d3.easeCircleOut).attr('r', function(d) { return scaleRadius(d.value)});
     node.select(".value").text(function(d){ return d.value.toFixed(2)})
-    
-    if(!this.state.simulation) this.setState({simulation: simulation})
   }
 
   render() {
@@ -119,6 +130,9 @@ class Graph extends Component {
         <div>
           <h1>{this.props.track.name}</h1>
           {this.props.track.artists ? <h3>{this.props.track.artists[0].name}</h3> : null}
+          <div id="traits">
+            {this.__checkTraits()}
+          </div>
         </div>
       </div>
     );
