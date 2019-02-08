@@ -2,11 +2,11 @@ import { combineReducers } from 'redux'
 import spotify from './spotify'
 import header from './header'
 import user from './user' 
-import playlist from './playlist'
+import playlists from './playlists'
 
 export const rootReducer = combineReducers({
     header,
     spotify,
     user,
-    playlist
+    playlists
 })

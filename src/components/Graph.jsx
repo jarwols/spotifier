@@ -53,7 +53,7 @@ class Graph extends Component {
 
   __generateForce(data, scaleRadius) {
     var simulation = d3.forceSimulation(data)
-    .velocityDecay(0.8)
+    .velocityDecay(0.7)
     .alphaDecay(0)
     .force("charge", d3.forceManyBody().strength([300]))
     .force("x", d3.forceX(0))
@@ -82,11 +82,11 @@ class Graph extends Component {
   __drawGraph(data) { 
     var scaleRadius = d3.scaleLinear()
       .domain([0,1])
-      .range([50,150]);
+      .range([75,200]);
 
     data = this.__generateForce(data, scaleRadius) 
 
-    var colorCircles = d3.scaleOrdinal(['white']);
+    var colorCircles = d3.scaleOrdinal().domain(key_set).range(['#ef476f', '#06d6a0', '#118ab2', '#073b4c', '#DB7F67', '#C4D6B0', '#54494B']);
 
     let node = this.state.graph.selectAll("g")
       .data(data)
@@ -101,25 +101,26 @@ class Graph extends Component {
     nodeEnter.append("circle")
       .attr('r', function(d) { return scaleRadius(d.value)})
       .style("fill", function(d) { return colorCircles(d.title)})
-      .style("stroke", "#eaafc8")
       .attr("stroke-width", "3px")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
 
     nodeEnter.append("text")
+      .attr('fill', 'white') 
       .attr("text-anchor", "middle")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
-      .attr('font-size', '8pt')
+      .attr('font-size', '12pt')
       .text(function(d){return d.title})
     
     nodeEnter.append("text")
       .attr("text-anchor", "middle")
+      .attr('fill', 'white') 
       .attr("class", "value")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
-      .attr('font-size', '8pt')
+      .attr('font-size', '12pt')
       .attr("dy", "2em") 
       .text(function(d){ return d.value.toFixed(2)})
 
-    node.select("circle").transition().duration(2000)
+    node.select("circle").transition().duration(500)
         .ease(d3.easeCircleOut).attr('r', function(d) { return scaleRadius(d.value)});
     node.select(".value").text(function(d){ return d.value.toFixed(2)})
   }

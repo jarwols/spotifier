@@ -6,11 +6,8 @@
     justify-content: center;
     font-family: 'Montserrat', sans-serif;
     font-size: 2em;
-    color: white; 
+    color: black; 
     cursor: pointer;
-    background: #654ea3;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #eaafc8, #654ea3);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #eaafc8, #654ea3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     text-align: center;
 }
 
@@ -20,12 +17,6 @@
         -ms-animation: fadein 3s; /* Internet Explorer */
          -o-animation: fadein 3s; /* Opera < 12.1 */
             animation: fadein 3s;
-}
-
-.Login img {
-    position: absolute;
-    bottom: 0;
-    right: 1em;
 }
 
 @keyframes fadein {
@@ -66,7 +57,8 @@
     width: 20%; 
     border-radius: 3em;
     border: none; 
-    color: #654ea3;
+    background: black; 
+    color: white;
 }
 
 .Login button h3 {
