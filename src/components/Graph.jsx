@@ -3,6 +3,16 @@ import * as d3 from 'd3';
 import Dimensions from 'react-dimensions';
 
 const key_set = ['danceability','energy','valence','acousticness','speechiness','liveness','instrumentalness']
+const filter_keys = ['speechiness', 'instrumentalness']
+const key_map = {
+  'danceability': 'danceability',
+  'energy': 'energy',
+  'valence': 'happiness',
+  'acousticness': 'acoustics',
+  'speechiness': 'vocals',
+  'liveness': 'liveness',
+  'instrumentalness': 'instruments'
+}
 
 class Graph extends Component {
 
@@ -40,7 +50,7 @@ class Graph extends Component {
     let result_arr = [];
     let result_keys = {}; 
     for (let key in key_set) {
-      if(data[key_set[key]].toFixed(2) == 0) continue; 
+      if(data[key_set[key]].toFixed(2) == 0 || filter_keys.includes(key_set[key])) continue; 
       result_arr.push({value: data[key_set[key]], title: key_set[key], index: key})
       result_keys[key] = key_set[key];
     }
@@ -53,9 +63,9 @@ class Graph extends Component {
 
   __generateForce(data, scaleRadius) {
     var simulation = d3.forceSimulation(data)
-    .velocityDecay(0.7)
-    .alphaDecay(0)
-    .force("charge", d3.forceManyBody().strength([300]))
+    .velocityDecay(0.8)
+    .alphaDecay(0.01)
+    .force("charge", d3.forceManyBody().strength([-100]))
     .force("x", d3.forceX(0))
     .force("y", d3.forceY(0))
     .force('collision', d3.forceCollide().radius(function(d) {
@@ -82,11 +92,11 @@ class Graph extends Component {
   __drawGraph(data) { 
     var scaleRadius = d3.scaleLinear()
       .domain([0,1])
-      .range([75,200]);
+      .range([50,220]);
 
     data = this.__generateForce(data, scaleRadius) 
 
-    var colorCircles = d3.scaleOrdinal().domain(key_set).range(['#ef476f', '#06d6a0', '#118ab2', '#073b4c', '#DB7F67', '#C4D6B0', '#54494B']);
+    var colorCircles = d3.scaleOrdinal().domain(key_set).range(['#ef476f', '#06d6a0', '#118ab2', '#DB7F67', '#C4D6B0', '#54494B']);
 
     let node = this.state.graph.selectAll("g")
       .data(data)
@@ -109,7 +119,7 @@ class Graph extends Component {
       .attr("text-anchor", "middle")
       .attr('transform', 'translate(' + [this.state.width / 2, this.state.height / 2] + ')')
       .attr('font-size', '12pt')
-      .text(function(d){return d.title})
+      .text(function(d){return key_map[d.title]})
     
     nodeEnter.append("text")
       .attr("text-anchor", "middle")
@@ -131,9 +141,9 @@ class Graph extends Component {
         <div>
           <h1>{this.props.track.name}</h1>
           {this.props.track.artists ? <h3>{this.props.track.artists[0].name}</h3> : null}
-          <div id="traits">
+          {/* <div id="traits">
             {this.__checkTraits()}
-          </div>
+          </div> */}
         </div>
       </div>
     );
