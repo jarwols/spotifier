@@ -54,7 +54,8 @@
 
 .Login button {
     margin-top: 50px;
-    width: 20%; 
+    font-family: 'Montserrat', sans-serif;
+    width: 300px; 
     border-radius: 3em;
     border: none; 
     background: black; 
@@ -71,10 +72,11 @@
 
 .Login h5 {
     opacity: 0.8; 
+    font-size: 22pt;
 }
 
 .Login h1 {
-    font-size: 3em;
+    font-size: 44pt;
 }
 
 html, body, #root, #root:nth-child(1) {

@@ -72,7 +72,9 @@ class Graph extends Component {
       return scaleRadius(d.value); 
     }))
     .on("tick", function() {
-      d3.selectAll("g").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")" })
+      d3.selectAll("g").attr("transform", function(d) { 
+        return "translate(" + d.x + "," + d.y + ")" 
+      });
     })
     if(!this.state.simulation) this.setState({simulation: simulation, data: data})
     return data; 
@@ -83,8 +85,8 @@ class Graph extends Component {
     return (this.state.result_set.map((item, index) => {
       if(item.value > 0.66) {
         return (
-          <h4 key={"trait-" + index}>{item.title}</h4>
-        )
+          <Trait item={item} key={index} index={index}/> 
+        );
       }
     }));
   }
@@ -92,7 +94,7 @@ class Graph extends Component {
   __drawGraph(data) { 
     var scaleRadius = d3.scaleLinear()
       .domain([0,1])
-      .range([50,220]);
+      .range([50,180]);
 
     data = this.__generateForce(data, scaleRadius) 
 
@@ -150,4 +152,11 @@ class Graph extends Component {
   }
 }
 
+const Trait = (props) => (
+  <div className="trait">
+    <h4 key={"trait-" + props.index}>{props.item.title}</h4>
+  </div> 
+); 
+
 export default Dimensions()(Graph);
+
