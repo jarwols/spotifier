@@ -2,8 +2,7 @@
 
 ![Alt Text](demo.gif)
 
-
-Spotifier is a React-Redux web application that aims to give user's insights into their musical habits. Spotifier queries Spotify's API to retrieve your 50 top listened tracks and artists, and subsequently offers insights into the traits of each individual track. Playlists are offered over three time periods, all of which are dated from today: 1 month, 6 months, and All Time. These playlists can be downloaded via the Export Playlist button. Artists can be toggled, as an easter egg (aka in development), by clicking on 'Top Tracks'. 
+Spotifier is a React-Redux web application that aims to give users insights into their musical habits. Spotifier queries Spotify's API to retrieve your 50 top listened tracks and artists, and subsequently offers insights into the traits of each individual track. Playlists are offered over three time periods, all of which are dated from today: 1 month, 6 months, and All Time. These playlists can be downloaded via the Export Playlist button. Artists can be toggled, as an easter egg (aka in development), by clicking on 'Top Tracks'. 
 
 # How to build/run Spotifier 
 
